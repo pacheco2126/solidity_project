@@ -65,8 +65,15 @@ function approveSale() public { //write the mapping w/ msg sender which is the a
 
 function getBalance() public view returns (uint) {
     return address(this).balance;
-    
 }
+//cancel the sale handle earnest deposit
+//if inspection status is not approved, then refund otherwise send to seller
+function cancelSale() public{
+    if(inspectionPassed == false) payable(buyer).transfer(address(this).balance);
+    else payable(seller).transfer(address(this).balance);
+}
+
+
     function finalizeSale() public {
         require(inspectionPassed, "Must pass the inspection");
         require(approval[buyer], 'must be approved by buyer');
@@ -74,7 +81,7 @@ function getBalance() public view returns (uint) {
         require(approval[lender], 'must be approved by lender');
         require(address(this).balance >= purchasePrice, 'must have enought ether for sale');
         (bool success, )= payable(seller).call{value: address(this).balance}("");
-        require(success);
+        require(success); // transfer the funds to the buyer
 
         //transfer owneership of property
         IERC721(nftAddress).transferFrom(seller, buyer, nftID);

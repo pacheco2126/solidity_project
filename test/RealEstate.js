@@ -60,7 +60,7 @@ let transaction, balance
       
         //check escrow balance before transaction
         balance = await escrow.getBalance()
-        console.log("escrow balance:", ethers.formatEther(balance))
+        console.log("escrow balance before transfer:", ethers.formatEther(balance))
 
 
 
@@ -108,6 +108,10 @@ let transaction, balance
         // Excpects buyer to be nft owner after the sale
         expect(await realEstate.ownerOf(nftID)).to.equal(buyer.address)
 
+        // Expect Seller to receive funds
+        balance = await ethers.provider.getBalance(seller.address)
+        console.log("Seller balance:", ethers.formatEther(balance))
+        expect(balance).to.be.above(ether(10099))
     })
     
     })
